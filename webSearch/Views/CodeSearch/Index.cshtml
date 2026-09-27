@@ -1,0 +1,180 @@
+﻿@model webSearch.Models.CodeSearchViewModel
+@using webSearch.Models
+
+@{
+    ViewBag.Title = "Code Search";
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow-lg">
+
+        <div class="card-header bg-light">
+            <h4 class="mb-0">
+                <i class="fa fa-search me-2"></i>
+                Code Search
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            @using (Html.BeginForm(
+                "Search",
+                "CodeSearch",
+                FormMethod.Post))
+            {
+                <div class="row g-3">
+
+                    <div class="col-md-8">
+
+                        <label class="form-label fs-5">
+                            Folder Path
+                        </label>
+
+                        @Html.TextBoxFor(
+                            x => x.FolderPath,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder =
+                                    @"F:\GitProjectsBitBuket\freshmaxgimportal\DB"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            x => x.FolderPath,
+                            "",
+                            new { @class = "text-danger" })
+
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end">
+
+                        <button type="button"
+                                class="btn btn-outline-secondary w-100">
+                            <i class="fa fa-folder-open me-1"></i>
+                            Validate Folder
+                        </button>
+
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <label class="form-label fs-5">
+                            Search Pattern
+                        </label>
+
+                        @Html.TextBoxFor(
+                            x => x.SearchPattern,
+                            new
+                            {
+                                @class = "form-control",
+                                placeholder =
+                                    "RPS_BOMDetails_ReadByBomGTID"
+                            })
+
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-end">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="fa fa-search me-1"></i>
+                            Search
+
+                        </button>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    </div>
+
+
+    @if (Model.Results != null && Model.Results.Any())
+    {
+        <div class="card shadow-lg mt-4">
+
+            <div class="card-header bg-light">
+
+                <div class="d-flex justify-content-between">
+
+                    <h4 class="mb-0">
+                        Search Results
+                    </h4>
+
+                    <span class="badge bg-primary">
+                        @Model.Results.Count result(s)
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Line</th>
+                                <th>Content</th>
+                                <th>Path</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (
+                                webSearch.Models.CodeSearchResult result
+                                in Model.Results)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @result.FileName
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            @result.LineNumber
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <code>
+                                            @result.Line
+                                        </code>
+                                    </td>
+
+                                    <td>
+                                        <small>
+                                            @result.FilePath
+                                        </small>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.SearchPattern))
+    {
+        <div class="alert alert-warning mt-4">
+            No matching results found.
+        </div>
+    }
+
+</div>
